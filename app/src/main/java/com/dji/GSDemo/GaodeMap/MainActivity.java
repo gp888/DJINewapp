@@ -193,6 +193,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private void onProductConnectionChange()
     {
         initFlightController();
+        //--mtr
+        initDataTransmission();
+        //--
     }
 
     private void initFlightController() {
@@ -219,6 +222,31 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         }
     }
+
+    //--mtr
+    private void initDataTransmission(){
+        BaseProduct product = DJIDemoApplication.getProductInstance();
+        if (product != null && product.isConnected()) {
+            if (product instanceof Aircraft) {
+                mFlightController = ((Aircraft) product).getFlightController();
+            }
+        }
+
+        setResultToToast("DataTransmission init");
+
+        if (mFlightController != null) {
+            mFlightController.setOnboardSDKDeviceDataCallback(new FlightController.OnboardSDKDeviceDataCallback() {
+                @Override
+                public void onReceive(byte[] bytes) {
+                    //setResultToToast("DataTransmission ok");
+                    String str = new String(bytes);
+                    //mydatashow.setText(str);
+                    //Toast.makeText(MainActivity.this,str , Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+    //--
 
     //Add Listener for WaypointMissionOperator
     private void addListener() {
