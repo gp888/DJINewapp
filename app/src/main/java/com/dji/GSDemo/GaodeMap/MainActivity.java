@@ -62,6 +62,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     private Button locate, add, clear;
     private Button config, upload, start, stop;
+    private TextView mydatashow;
 
     private boolean isAdd = false;
 
@@ -84,6 +85,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     protected void onResume(){
         super.onResume();
         initFlightController();
+        initDataTransmission();
     }
 
     @Override
@@ -124,6 +126,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         upload = (Button) findViewById(R.id.upload);
         start = (Button) findViewById(R.id.start);
         stop = (Button) findViewById(R.id.stop);
+
+        mydatashow = (TextView) findViewById(R.id.datashow);
 
         locate.setOnClickListener(this);
         add.setOnClickListener(this);
@@ -240,7 +244,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 public void onReceive(byte[] bytes) {
                     //setResultToToast("DataTransmission ok");
                     String str = new String(bytes);
-                    //mydatashow.setText(str);
+                    mydatashow.setText(str);
                     //Toast.makeText(MainActivity.this,str , Toast.LENGTH_SHORT).show();
                 }
             });
