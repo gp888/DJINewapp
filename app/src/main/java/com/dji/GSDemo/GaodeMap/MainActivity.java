@@ -593,4 +593,24 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     }
 
+    private void configMission(){
+        if (waypointMissionBuilder == null){
+
+            waypointMissionBuilder = new WaypointMission.Builder().finishedAction(mFinishedAction)
+                    .headingMode(mHeadingMode)
+                    .autoFlightSpeed(mSpeed)
+                    .maxFlightSpeed(mSpeed)
+                    .flightPathMode(WaypointMissionFlightPathMode.NORMAL);
+
+        }else
+        {
+            waypointMissionBuilder.finishedAction(mFinishedAction)
+                    .headingMode(mHeadingMode)
+                    .autoFlightSpeed(mSpeed)
+                    .maxFlightSpeed(mSpeed)
+                    .flightPathMode(WaypointMissionFlightPathMode.NORMAL);
+
+        }
+    }
+
 }
