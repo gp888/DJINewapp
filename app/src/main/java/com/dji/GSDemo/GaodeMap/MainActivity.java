@@ -62,6 +62,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     private Button locate, add, clear;
     private Button config, upload, start, stop;
+    private TextView mydatashow;
 
     private boolean isAdd = false;
 
@@ -84,6 +85,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     protected void onResume(){
         super.onResume();
         initFlightController();
+        initDataTransmission();
     }
 
     @Override
@@ -124,6 +126,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         upload = (Button) findViewById(R.id.upload);
         start = (Button) findViewById(R.id.start);
         stop = (Button) findViewById(R.id.stop);
+
+        mydatashow = (TextView) findViewById(R.id.datashow);
 
         locate.setOnClickListener(this);
         add.setOnClickListener(this);
@@ -193,6 +197,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private void onProductConnectionChange()
     {
         initFlightController();
+        //--mtr
+        initDataTransmission();
+        //--
     }
 
     private void initFlightController() {
@@ -219,6 +226,31 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         }
     }
+
+    //--mtr
+    private void initDataTransmission(){
+        BaseProduct product = DJIDemoApplication.getProductInstance();
+        if (product != null && product.isConnected()) {
+            if (product instanceof Aircraft) {
+                mFlightController = ((Aircraft) product).getFlightController();
+            }
+        }
+
+        setResultToToast("DataTransmission init");
+
+        if (mFlightController != null) {
+            mFlightController.setOnboardSDKDeviceDataCallback(new FlightController.OnboardSDKDeviceDataCallback() {
+                @Override
+                public void onReceive(byte[] bytes) {
+                    //setResultToToast("DataTransmission ok");
+                    String str = new String(bytes);
+                    mydatashow.setText(str);
+                    //Toast.makeText(MainActivity.this,str , Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+    //--
 
     //Add Listener for WaypointMissionOperator
     private void addListener() {
@@ -559,6 +591,26 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             }
         });
 
+    }
+
+    private void configMission(){
+        if (waypointMissionBuilder == null){
+
+            waypointMissionBuilder = new WaypointMission.Builder().finishedAction(mFinishedAction)
+                    .headingMode(mHeadingMode)
+                    .autoFlightSpeed(mSpeed)
+                    .maxFlightSpeed(mSpeed)
+                    .flightPathMode(WaypointMissionFlightPathMode.NORMAL);
+
+        }else
+        {
+            waypointMissionBuilder.finishedAction(mFinishedAction)
+                    .headingMode(mHeadingMode)
+                    .autoFlightSpeed(mSpeed)
+                    .maxFlightSpeed(mSpeed)
+                    .flightPathMode(WaypointMissionFlightPathMode.NORMAL);
+
+        }
     }
 
 }
