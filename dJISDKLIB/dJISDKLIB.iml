@@ -100,7 +100,7 @@
       <excludeFolder url="file://$MODULE_DIR$/build/outputs" />
       <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
     </content>
-    <orderEntry type="jdk" jdkName="Android API 22 Platform" jdkType="Android SDK" />
+    <orderEntry type="jdk" jdkName="Android API 23 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="okio-1.7.0" level="project" />
     <orderEntry type="library" exported="" name="dji_gson" level="project" />
@@ -116,6 +116,6 @@
     <orderEntry type="library" exported="" name="sqlbrite-0.6.2" level="project" />
     <orderEntry type="library" exported="" name="sqlcipher" level="project" />
     <orderEntry type="library" exported="" name="dji-sdk" level="project" />
-    <orderEntry type="library" exported="" name="android-android-22" level="project" />
+    <orderEntry type="library" exported="" name="android-android-23" level="project" />
   </component>
 </module>
