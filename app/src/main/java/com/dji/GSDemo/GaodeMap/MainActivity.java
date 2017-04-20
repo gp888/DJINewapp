@@ -20,11 +20,17 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.AMap.OnMapClickListener;
 import com.amap.api.maps2d.CameraUpdate;
 import com.amap.api.maps2d.CameraUpdateFactory;
+import com.amap.api.maps2d.LocationSource;
 import com.amap.api.maps2d.MapView;
+import com.amap.api.maps2d.UiSettings;
 import com.amap.api.maps2d.model.BitmapDescriptorFactory;
 import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.Marker;
@@ -53,7 +59,8 @@ import dji.sdk.mission.waypoint.WaypointMissionOperatorListener;
 import dji.sdk.products.Aircraft;
 import dji.sdk.sdkmanager.DJISDKManager;
 
-public class MainActivity extends FragmentActivity implements View.OnClickListener, OnMapClickListener {
+public class MainActivity extends FragmentActivity implements View.OnClickListener,
+        OnMapClickListener,LocationSource,AMapLocationListener {
 
     protected static final String TAG = "MainActivity";
 
@@ -80,10 +87,17 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private WaypointMissionOperator instance;
     private WaypointMissionFinishedAction mFinishedAction = WaypointMissionFinishedAction.NO_ACTION;
     private WaypointMissionHeadingMode mHeadingMode = WaypointMissionHeadingMode.AUTO;
+    private UiSettings mUiSettings;
+    //定位
+    private OnLocationChangedListener mLocationChangeListener;
+    public AMapLocationClient mLocationClient;
+    private AMapLocationClientOption mLocationOption;
+    private Marker locationMarker;
 
     @Override
     protected void onResume(){
         super.onResume();
+        mapView.onResume();
         initFlightController();
         initDataTransmission();
     }
@@ -91,6 +105,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     @Override
     protected void onPause(){
         super.onPause();
+        mapView.onPause();
+        deactivate();
     }
 
     @Override
@@ -98,6 +114,13 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         unregisterReceiver(mReceiver);
         removeListener();
         super.onDestroy();
+        mapView.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
     }
 
     /**
@@ -145,10 +168,15 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             aMap = mapView.getMap();
             aMap.setOnMapClickListener(this);// add the listener for click for amap object
         }
+        mUiSettings = aMap.getUiSettings();
+        aMap.setLocationSource(this);// 设置定位监听
+        mUiSettings.setMyLocationButtonEnabled(true);// 设置默认定位按钮是否显示
+        aMap.setMyLocationEnabled(true);// 设置为true表示显示定位层并可触发定位，false表示隐藏定位层并不可触发定位，默认是false
 
-        LatLng shenzhen = new LatLng(22.5362, 113.9454);
-        aMap.addMarker(new MarkerOptions().position(shenzhen).title("Marker in Shenzhen"));
-        aMap.moveCamera(CameraUpdateFactory.newLatLng(shenzhen));
+
+//        LatLng shenzhen = new LatLng(22.5362, 113.9454);
+//        aMap.addMarker(new MarkerOptions().position(shenzhen).title("Marker in Shenzhen"));
+//        aMap.moveCamera(CameraUpdateFactory.newLatLng(shenzhen));
     }
 
     @Override
@@ -294,7 +322,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     public WaypointMissionOperator getWaypointMissionOperator() {
         if (instance == null) {
-            instance = DJISDKManager.getInstance().getMissionControl().getWaypointMissionOperator();
+//            instance = DJISDKManager.getInstance().getMissionControl().getWaypointMissionOperator();
         }
         return instance;
     }
@@ -613,4 +641,74 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         }
     }
 
+    /**
+     * 激活定位
+     * @param onLocationChangedListener
+     */
+    @Override
+    public void activate(OnLocationChangedListener onLocationChangedListener) {
+        mLocationChangeListener = onLocationChangedListener;
+        if (mLocationClient == null) {
+            mLocationClient = new AMapLocationClient(this);
+            mLocationOption = new AMapLocationClientOption();
+            // 设置定位监听
+            mLocationClient.setLocationListener(this);
+            mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);//可选，设置定位模式，可选的模式有高精度、仅设备、仅网络。默认为高精度模式
+            mLocationOption.setHttpTimeOut(20000);//可选，设置网络请求超时时间。默认为30秒。在仅设备模式下无效
+            mLocationOption.setInterval(5000);//可选，设置定位间隔。默认为2秒
+            mLocationOption.setNeedAddress(true);//可选，设置是否返回逆地理地址信息。默认是true
+            mLocationOption.setOnceLocation(false);//可选，设置是否单次定位。默认是false
+            mLocationOption.setOnceLocationLatest(false);//可选，设置是否等待wifi刷新，默认为false.如果设置为true,会自动变为单次定位，持续定位时不要使用
+            mLocationOption.setLocationCacheEnable(true); //可选，设置是否使用缓存定位，默认为true
+            // 设置定位参数
+            mLocationClient.setLocationOption(mLocationOption);
+
+            mLocationClient.startLocation();
+        }
+    }
+
+    /**
+     * 停止定位
+     */
+    @Override
+    public void deactivate() {
+        mLocationChangeListener = null;
+        if (mLocationClient != null) {
+            mLocationClient.stopLocation();
+            mLocationClient.onDestroy();
+        }
+        mLocationClient = null;
+    }
+
+    /**
+     * 定位成功后回调函数
+     */
+    @Override
+    public void onLocationChanged(AMapLocation aMapLocation) {
+        if (mLocationChangeListener != null && aMapLocation != null) {
+            if (aMapLocation != null && aMapLocation.getErrorCode() == 0) {
+                //定位信息：
+//                location.setText("经度：" + aMapLocation.getLatitude() +
+//                        "纬度：" + aMapLocation.getLongitude() +
+//                        "地址：" + aMapLocation.getCountry() + "," + aMapLocation.getProvince()
+//                        + "," + aMapLocation.getCity() + "," + aMapLocation.getAddress());
+                LatLng latLng = new LatLng(aMapLocation.getLatitude(), aMapLocation.getLongitude());
+
+                //添加Marker显示定位位置
+                if (locationMarker == null) {
+                    locationMarker = aMap.addMarker(new MarkerOptions()
+                            .position(latLng)
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.location_marker)));
+                } else {
+                    locationMarker.setPosition(latLng);
+                }
+                //然后可以移动到定位点,使用animateCamera就有动画效果
+//                aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
+//                mLocationClient.stopLocation();//停止定位后，本地定位服务并不会被销毁
+//                mLocationChangeListener.onLocationChanged(aMapLocation);// 显示系统小蓝点
+            } else {
+                Toast.makeText(MainActivity.this,"定位失败，" + aMapLocation.getErrorInfo(),Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 }
