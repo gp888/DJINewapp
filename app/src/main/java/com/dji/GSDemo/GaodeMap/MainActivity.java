@@ -367,7 +367,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     public WaypointMissionOperator getWaypointMissionOperator() {
         if (instance == null) {
-//            instance = DJISDKManager.getInstance().getMissionControl().getWaypointMissionOperator();
+            instance = DJISDKManager.getInstance().getMissionControl().getWaypointMissionOperator();
         }
         return instance;
     }
