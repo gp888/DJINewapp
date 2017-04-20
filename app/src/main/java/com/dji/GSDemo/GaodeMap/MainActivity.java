@@ -24,6 +24,7 @@ import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.AMap.OnMapClickListener;
 import com.amap.api.maps2d.CameraUpdate;
 import com.amap.api.maps2d.CameraUpdateFactory;
+import com.amap.api.maps2d.CoordinateConverter;
 import com.amap.api.maps2d.MapView;
 import com.amap.api.maps2d.model.BitmapDescriptorFactory;
 import com.amap.api.maps2d.model.LatLng;
@@ -104,6 +105,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private double BasicPointLng = 113;//--WGS84
     protected double homeLatitude = 181;
     protected double homeLongitude = 181;
+    protected  LatLng homelatlng;
     private float StartHigh = 2;
     private float Interval = 2;
     private int TestPoints = 5;
@@ -761,6 +763,19 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                         + homeLatitude
                         + "\nhome point longitude: "
                         + homeLongitude);
+
+
+                homelatlng = GCJ2WGS.getWGS84Location(new LatLng(homeLatitude,homeLongitude));
+                setResultToToast("home point latitude: "
+                        + homelatlng.latitude
+                        + "\nhome point longitude: "
+                        + homelatlng.longitude);
+
+                LatLng latlng1 = getGCJ02Location(homelatlng);
+                setResultToToast("home point latitude: "
+                        + latlng1.latitude
+                        + "\nhome point longitude: "
+                        + latlng1.longitude);
             }
 
             @Override
@@ -771,7 +786,19 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     }
 
-    private static LatLng getGCJ02Location()
+    private static LatLng getGCJ02Location(LatLng pos){
+        //--GPS转换为高德坐标系
+        CoordinateConverter converter  = new CoordinateConverter();
+        // CoordType.GPS 待转换坐标类型
+        converter.from(CoordinateConverter.CoordType.GPS);
+        // sourceLatLng待转换坐标点 DPoint类型
+        converter.coord(pos);
+        // 执行转换操作
+        LatLng desLatLng = converter.convert();
+        return  desLatLng;
+    }
+
+
 
 
 }
