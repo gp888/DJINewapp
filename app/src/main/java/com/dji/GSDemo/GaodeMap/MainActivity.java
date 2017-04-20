@@ -34,9 +34,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import dji.common.flightcontroller.FlightControllerState;
+import dji.common.mission.hotpoint.HotpointHeading;
+import dji.common.mission.hotpoint.HotpointMission;
+import dji.common.mission.hotpoint.HotpointStartPoint;
 import dji.common.mission.waypoint.Waypoint;
+import dji.common.mission.waypoint.WaypointAction;
+import dji.common.mission.waypoint.WaypointActionType;
 import dji.common.mission.waypoint.WaypointMission;
 import dji.common.mission.waypoint.WaypointMissionDownloadEvent;
 import dji.common.mission.waypoint.WaypointMissionExecutionEvent;
@@ -44,10 +51,20 @@ import dji.common.mission.waypoint.WaypointMissionFinishedAction;
 import dji.common.mission.waypoint.WaypointMissionFlightPathMode;
 import dji.common.mission.waypoint.WaypointMissionHeadingMode;
 import dji.common.mission.waypoint.WaypointMissionUploadEvent;
+import dji.common.model.LocationCoordinate2D;
 import dji.common.util.CommonCallbacks;
 import dji.sdk.base.BaseProduct;
 import dji.sdk.flightcontroller.FlightController;
 import dji.common.error.DJIError;
+import dji.sdk.mission.MissionControl;
+import dji.sdk.mission.timeline.Mission;
+import dji.sdk.mission.timeline.TimelineElement;
+import dji.sdk.mission.timeline.TimelineEvent;
+import dji.sdk.mission.timeline.actions.GoHomeAction;
+import dji.sdk.mission.timeline.actions.GoToAction;
+import dji.sdk.mission.timeline.actions.HotpointAction;
+import dji.sdk.mission.timeline.actions.RecordVideoAction;
+import dji.sdk.mission.timeline.actions.TakeOffAction;
 import dji.sdk.mission.waypoint.WaypointMissionOperator;
 import dji.sdk.mission.waypoint.WaypointMissionOperatorListener;
 import dji.sdk.products.Aircraft;
@@ -81,6 +98,17 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private WaypointMissionFinishedAction mFinishedAction = WaypointMissionFinishedAction.NO_ACTION;
     private WaypointMissionHeadingMode mHeadingMode = WaypointMissionHeadingMode.AUTO;
 
+    //--mtr
+    private MissionControl missionControl;
+    private double BasicPointLat = 22;
+    private double BasicPointLng = 113;//--WGS84
+    protected double homeLatitude = 181;
+    protected double homeLongitude = 181;
+    private float StartHigh = 2;
+    private float Interval = 2;
+    private int TestPoints = 5;
+    private int SinglePointTime = 10;
+    //--
     @Override
     protected void onResume(){
         super.onResume();
@@ -303,6 +331,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public void onMapClick(LatLng point) {
         if (isAdd == true){
             markWaypoint(point);
+            //--mtr
+            BasicPointLat = point.latitude;
+            BasicPointLng = point.longitude;
+            //--
+            /*
             Waypoint mWaypoint = new Waypoint(point.latitude, point.longitude, altitude);
             //Add Waypoints to Waypoint arraylist;
             if (waypointMissionBuilder != null) {
@@ -314,6 +347,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 waypointList.add(mWaypoint);
                 waypointMissionBuilder.waypointList(waypointList).waypointCount(waypointList.size());
             }
+            */
         }else{
             setResultToToast("Cannot Add Waypoint");
         }
@@ -381,15 +415,19 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 break;
             }
             case R.id.config:{
-                showSettingDialog();
+                configTimeline();
+                //configMission();
+                //showSettingDialog();
                 break;
             }
             case R.id.upload:{
-                uploadWayPointMission();
+                getHomePoint();
+                //uploadWayPointMission();
                 break;
             }
             case R.id.start:{
-                startWaypointMission();
+                startTimeline();
+                //startWaypointMission();
                 break;
             }
             case R.id.stop:{
@@ -594,23 +632,146 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
     private void configMission(){
-        if (waypointMissionBuilder == null){
+        //Waypoint mWaypoint = new Waypoint(BasicPointLat, BasicPointLng, altitude);
+        if (waypointMissionBuilder == null) {
+            waypointMissionBuilder = new WaypointMission.Builder();
+        }
 
-            waypointMissionBuilder = new WaypointMission.Builder().finishedAction(mFinishedAction)
-                    .headingMode(mHeadingMode)
-                    .autoFlightSpeed(mSpeed)
-                    .maxFlightSpeed(mSpeed)
-                    .flightPathMode(WaypointMissionFlightPathMode.NORMAL);
+        for(int i=0; i < TestPoints; i++){
 
-        }else
-        {
-            waypointMissionBuilder.finishedAction(mFinishedAction)
-                    .headingMode(mHeadingMode)
-                    .autoFlightSpeed(mSpeed)
-                    .maxFlightSpeed(mSpeed)
-                    .flightPathMode(WaypointMissionFlightPathMode.NORMAL);
+            final Waypoint eachWaypoint = new Waypoint(BasicPointLat,BasicPointLng,
+                    StartHigh + Interval * i);
+            eachWaypoint.addAction(new WaypointAction(WaypointActionType.STAY, SinglePointTime * 1000));
+            waypointList.add(eachWaypoint);
+            waypointMissionBuilder.waypointList(waypointList).waypointCount(waypointList.size());
 
+            //setResultToToast(String.valueOf(BasicPointLat)+String.valueOf(BasicPointLng));
+            //setResultToToast(String.valueOf(waypointList.size()));
+        }
+        //waypointMissionBuilder.waypointList(waypointList).waypointCount( TestPoints);
+
+
+        waypointMissionBuilder.finishedAction(WaypointMissionFinishedAction.GO_HOME)
+                .headingMode(WaypointMissionHeadingMode.AUTO)
+                .autoFlightSpeed(5f)
+                .maxFlightSpeed(10f)
+                .flightPathMode(WaypointMissionFlightPathMode.NORMAL);
+
+        DJIError error = getWaypointMissionOperator().loadMission(waypointMissionBuilder.build());
+        if (error == null) {
+            setResultToToast("loadWaypoint succeeded");
+        } else {
+            setResultToToast("loadWaypoint failed " + error.getDescription());
+        }
+
+    }
+    private void configTimeline() {
+        //if (!GeneralUtils.checkGpsCoordinate(homeLatitude, homeLongitude)) {
+        //    ToastUtils.setResultToToast("No home point!!!");
+        //    return;
+        //}
+
+        List<TimelineElement> elements = new ArrayList<>();
+
+        missionControl = MissionControl.getInstance();
+        final TimelineEvent preEvent = null;
+        MissionControl.Listener listener = new MissionControl.Listener() {
+            @Override
+            public void onEvent(@Nullable TimelineElement element, TimelineEvent event, DJIError error) {
+                updateTimelineStatus(element, event, error);
+            }
+        };
+
+        //Step 1: takeoff from the ground
+        setResultToToast("Step 1: takeoff from the ground");
+        elements.add(new TakeOffAction());
+
+
+        //Step 2: start a hotpoint mission
+        setResultToToast("Step 5: start a hotpoint mission to surround 360 degree");
+        HotpointMission hotpointMission = new HotpointMission();
+        hotpointMission.setHotpoint(new LocationCoordinate2D(BasicPointLat,BasicPointLng));
+        hotpointMission.setAltitude(40);
+        hotpointMission.setRadius(20);
+        hotpointMission.setAngularVelocity(10);
+        HotpointStartPoint startPoint = HotpointStartPoint.NEAREST;
+        hotpointMission.setStartPoint(startPoint);
+        HotpointHeading heading = HotpointHeading.TOWARDS_HOT_POINT;
+        hotpointMission.setHeading(heading);
+        elements.add(new HotpointAction(hotpointMission, 360));
+
+        //Step 3: Go 10 meters from home point
+    //    setResultToToast("Step 3: Go 10 meters from home point");
+    //    elements.add(new GoToAction(new LocationCoordinate2D(homeLatitude, homeLongitude), 20));
+        //Step 4: go back home
+        setResultToToast("Step 6: go back home");
+        elements.add(new GoHomeAction());
+
+        if (missionControl.scheduledCount() > 0) {
+            missionControl.unscheduleEverything();
+            missionControl.removeAllListeners();
+        }
+
+        missionControl.scheduleElements(elements);
+        missionControl.addListener(listener);
+    }
+    private void startTimeline() {
+        if (MissionControl.getInstance().scheduledCount() > 0) {
+            MissionControl.getInstance().startTimeline();
+        } else {
+            setResultToToast("Init the timeline first by clicking the Init button");
         }
     }
+
+    private void updateTimelineStatus(@Nullable TimelineElement element, TimelineEvent event, DJIError error) {
+
+        if (element != null) {
+            if (element instanceof Mission) {
+                setResultToToast((((Mission) element).getMissionObject().getClass().getSimpleName()
+                        + " event is "
+                        + event.toString()
+                        + " "
+                        + (error == null ? "" : error.getDescription())));
+            } else {
+                setResultToToast((element.getClass().getSimpleName()
+                        + " event is "
+                        + event.toString()
+                        + " "
+                        + (error == null ? "" : error.getDescription())));
+            }
+        } else {
+            setResultToToast(("Timeline Event is " + event.toString() + " " + (error == null
+                    ? ""
+                    : "Failed:"
+                    + error.getDescription())));
+        }
+
+    }
+
+    private void getHomePoint(){
+
+        final CountDownLatch cdl = new CountDownLatch(1);
+
+        mFlightController.getHomeLocation(new CommonCallbacks.CompletionCallbackWith<LocationCoordinate2D>() {
+            @Override
+            public void onSuccess(LocationCoordinate2D locationCoordinate2D) {
+                homeLatitude = locationCoordinate2D.getLatitude();
+                homeLongitude = locationCoordinate2D.getLongitude();
+                setResultToToast("home point latitude: "
+                        + homeLatitude
+                        + "\nhome point longitude: "
+                        + homeLongitude);
+            }
+
+            @Override
+            public void onFailure(DJIError djiError) {
+                cdl.countDown();
+            }
+        });
+
+    }
+
+    private static LatLng getGCJ02Location()
+
 
 }
