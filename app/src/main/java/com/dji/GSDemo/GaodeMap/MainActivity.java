@@ -126,6 +126,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private String task_name,task_addr;
     private ImageView to_option1,backto_option2;
     private ScrollView option1,option2,option3;
+    private SeekBar seek_gdjg,seek_jcds,seek_ddcjsj,seek_qsgd;
 
     //--mtr
     private MissionControl missionControl;
@@ -214,8 +215,15 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         et_gdjg = (EditText) findViewById(R.id.et_gdjg);
         et_jcds = (EditText) findViewById(R.id.et_jcds);
         et_ddcjsj = (EditText) findViewById(R.id.et_ddcjsj);
+        seek_gdjg = (SeekBar) findViewById(R.id.seek_gdjg);
+        seek_jcds = (SeekBar) findViewById(R.id.seek_jcds);
+        seek_ddcjsj = (SeekBar) findViewById(R.id.seek_ddcjsj);
+        seek_qsgd = (SeekBar) findViewById(R.id.seek_qsgd);
 
-
+        seek_gdjg.setOnSeekBarChangeListener(this);
+        seek_jcds.setOnSeekBarChangeListener(this);
+        seek_ddcjsj.setOnSeekBarChangeListener(this);
+        seek_qsgd.setOnSeekBarChangeListener(this);
         backto_option2.setOnClickListener(this);
         to_option1.setOnClickListener(this);
         to_option3.setOnClickListener(this);
