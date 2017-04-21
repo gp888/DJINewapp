@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module external.linked.project.id=":AMap_2DMap_V2.8.1_20160202" external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$/.." external.system.id="GRADLE" type="JAVA_MODULE" version="4">
+<module external.linked.project.id=":AMap2DMap_4.2.0_AMapLocation_3.3.0_20170120" external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$/.." external.system.id="GRADLE" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="android-gradle" name="Android-Gradle">
       <configuration>
-        <option name="GRADLE_PROJECT_PATH" value=":AMap_2DMap_V2.8.1_20160202" />
+        <option name="GRADLE_PROJECT_PATH" value=":AMap2DMap_4.2.0_AMapLocation_3.3.0_20170120" />
       </configuration>
     </facet>
     <facet type="java-gradle" name="Java-Gradle">
@@ -21,6 +21,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="AMap_2DMap_V2.8.1_20160202.AMap_2DMap_V2.8.1_20160202" level="project" />
+    <orderEntry type="library" exported="" name="AMap2DMap_4.2.0_AMapLocation_3.3.0_20170120.AMap2DMap_4.2.0_AMapLocation_3.3.0_20170120" level="project" />
   </component>
 </module>

@@ -110,9 +110,8 @@
     <orderEntry type="library" exported="" name="support-annotations-23.1.1" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-23.1.1" level="project" />
     <orderEntry type="library" exported="" name="design-23.1.1" level="project" />
+    <orderEntry type="module" module-name="AMap2DMap_4.2.0_AMapLocation_3.3.0_20170120" exported="" />
     <orderEntry type="module" module-name="dJISDKLIB" exported="" />
-    <orderEntry type="module" module-name="AMap_Search_V3.2.1_20160308" exported="" />
-    <orderEntry type="module" module-name="AMap_2DMap_V2.8.1_20160202" exported="" />
     <orderEntry type="library" exported="" name="android-android-23" level="project" />
     <orderEntry type="library" exported="" name="okio-1.7.0" level="project" />
     <orderEntry type="library" exported="" name="dji_gson" level="project" />

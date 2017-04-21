@@ -3,6 +3,8 @@
     <string name="dji_check_air_encoder_error_reason">天空端编码器异常</string>
     <string name="dji_check_air_encoder_restart_solution">解决方案：请重启飞行器，如果多次启动均失败，请联系售后服务</string>
     <string name="dji_check_air_encoder_return_solution">解决方案：硬件故障，需要返厂维修，请联系售后服务</string>
+    <string name="dji_check_air_encoder_upgrade_reason">Aircraft updating.</string>
+    <string name="dji_check_air_encoder_upgrade_solution">Solution: Wait for the update complete.</string>
     <string name="dji_check_aircraft_in_flight">飞行中</string>
     <string name="dji_check_battery_broken_reason">电池电芯损坏</string>
     <string name="dji_check_battery_broken_solution">解决方案：停止使用该电池，联系售后服务</string>
@@ -207,4 +209,5 @@
     <string name="dji_check_vision_sensor_reason_front_right">前视右侧传感器状态异常</string>
     <string name="dji_check_vision_vision_reason">视觉系统异常</string>
     <string name="fpv_check_redundancy_failed_when_motor_up">备份IMU异常，建议停止电机并检查冗余状态</string>
+    <string name="version_name">4.0</string>
 </resources>

@@ -208,4 +208,6 @@
     <string name="dji_check_fc_imu_interfered_solution">解决方案：请远离地面磁场干扰</string>
     <string name="dji_check_fc_plain_propeller_on_plateau_solution">高原上请不要使用平原桨。</string>
     <string name="dji_check_fc_plateau_propeller_on_plain_solution">平原上请不要使用高原桨。</string>
+    <string name="dji_check_air_encoder_upgrade_reason">Aircraft updating.</string>
+    <string name="dji_check_air_encoder_upgrade_solution">Solution: Wait for the update complete.</string>
 </resources>
