@@ -540,6 +540,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 aMap.addMarker(new MarkerOptions().position(latLng).title(task_name));
                 markWaypoint(latLng);
                 setResultToToast(latLng.toString());
+                setResultToToast("made");
                 break;
             case R.id.setplane:
                 //LatLng pos = new LatLng(droneLocationLat, droneLocationLng);
