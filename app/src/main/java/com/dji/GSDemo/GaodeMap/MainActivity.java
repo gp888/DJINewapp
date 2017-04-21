@@ -14,9 +14,14 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -93,6 +98,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public AMapLocationClient mLocationClient;
     private AMapLocationClientOption mLocationOption;
     private Marker locationMarker;
+    private Spinner mission_type,mission_mode;
+    private EditText jingdu,weidu,mission_name,mission_addr,et_qsgd,et_gdjg,et_jcds,et_ddcjsj;
+    private Button btn_smap,btn_weixing,to_option2,to_option3,setPoint;
+    private String task_name,task_addr;
+    private ImageView to_option1,backto_option2;
+    private ScrollView option1,option2,option3;
 
     @Override
     protected void onResume(){
@@ -151,7 +162,27 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         stop = (Button) findViewById(R.id.stop);
 
         mydatashow = (TextView) findViewById(R.id.datashow);
+        mission_type = (Spinner) findViewById(R.id.mission_type);
+        mission_mode = (Spinner) findViewById(R.id.mission_mode);
+        to_option2 = (Button) findViewById(R.id.to_option2);
+        jingdu = (EditText) findViewById(R.id.jingdu);
+        weidu = (EditText) findViewById(R.id.weidu);
+        setPoint = (Button) findViewById(R.id.setPoint);
+        to_option3 = (Button) findViewById(R.id.to_option3);
+        to_option1 = (ImageView) findViewById(R.id.to_option1);
+        backto_option2 = (ImageView) findViewById(R.id.backto_option2);
+        option1 = (ScrollView) findViewById(R.id.option1);
+        option2 = (ScrollView) findViewById(R.id.option2);
+        option3 = (ScrollView) findViewById(R.id.option3);
+        mission_name = (EditText) findViewById(R.id.mission_name);
+        mission_addr = (EditText) findViewById(R.id.mission_addr);
 
+
+        backto_option2.setOnClickListener(this);
+        to_option1.setOnClickListener(this);
+        to_option3.setOnClickListener(this);
+        setPoint.setOnClickListener(this);
+        to_option2.setOnClickListener(this);
         locate.setOnClickListener(this);
         add.setOnClickListener(this);
         clear.setOnClickListener(this);
@@ -159,6 +190,20 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         upload.setOnClickListener(this);
         start.setOnClickListener(this);
         stop.setOnClickListener(this);
+        mission_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                if(pos >=1 && pos <= 3){
+                    mission_mode.setVisibility(View.VISIBLE);
+                }else {
+                    mission_mode.setVisibility(View.GONE);
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Another interface callback
+            }
+        });
 
     }
 
@@ -322,7 +367,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     public WaypointMissionOperator getWaypointMissionOperator() {
         if (instance == null) {
-//            instance = DJISDKManager.getInstance().getMissionControl().getWaypointMissionOperator();
+            instance = DJISDKManager.getInstance().getMissionControl().getWaypointMissionOperator();
         }
         return instance;
     }
@@ -424,6 +469,45 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 stopWaypointMission();
                 break;
             }
+            case R.id.to_option2:
+                task_name = mission_name.getText().toString();
+                task_addr = mission_addr.getText().toString();
+                if(task_name.isEmpty() || task_addr.isEmpty()){
+                    Toast.makeText(this,"任务名称或地址不能为空",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                option1.setVisibility(View.GONE);
+                option2.setVisibility(View.VISIBLE);
+                option3.setVisibility(View.GONE);
+//                setMapClickListener();
+                break;
+            case R.id.setPoint:
+                String j = jingdu.getText().toString();
+                String w = weidu.getText().toString();
+                if(j.isEmpty() || w.isEmpty()){
+                    Toast.makeText(this,"经纬度不能为空",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                LatLng latLng = new LatLng(Double.parseDouble(j),Double.parseDouble(w));
+                aMap.addMarker(new MarkerOptions().position(latLng).title(task_name));
+                break;
+            case R.id.to_option3:
+                option1.setVisibility(View.GONE);
+                option2.setVisibility(View.GONE);
+                option3.setVisibility(View.VISIBLE);
+//                aMap.setOnMapClickListener(null);
+                break;
+            case R.id.to_option1:
+                option1.setVisibility(View.VISIBLE);
+                option2.setVisibility(View.GONE);
+                option3.setVisibility(View.GONE);
+//                aMap.setOnMapClickListener(null);
+                break;
+            case R.id.backto_option2:
+                option1.setVisibility(View.GONE);
+                option2.setVisibility(View.VISIBLE);
+                option3.setVisibility(View.GONE);
+//                setMapClickListener();
             default:
                 break;
         }
