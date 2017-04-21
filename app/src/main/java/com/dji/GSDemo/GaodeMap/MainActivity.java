@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -86,7 +87,7 @@ import dji.sdk.products.Aircraft;
 import dji.sdk.sdkmanager.DJISDKManager;
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener,
-        OnMapClickListener,LocationSource,AMapLocationListener {
+        OnMapClickListener,LocationSource,AMapLocationListener,SeekBar.OnSeekBarChangeListener {
 
     protected static final String TAG = "MainActivity";
 
@@ -209,6 +210,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         option3 = (ScrollView) findViewById(R.id.option3);
         mission_name = (EditText) findViewById(R.id.mission_name);
         mission_addr = (EditText) findViewById(R.id.mission_addr);
+        et_qsgd = (EditText) findViewById(R.id.et_qsgd);
+        et_gdjg = (EditText) findViewById(R.id.et_gdjg);
+        et_jcds = (EditText) findViewById(R.id.et_jcds);
+        et_ddcjsj = (EditText) findViewById(R.id.et_ddcjsj);
 
 
         backto_option2.setOnClickListener(this);
@@ -987,6 +992,36 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 Toast.makeText(MainActivity.this,"定位失败，" + aMapLocation.getErrorInfo(),Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        switch (seekBar.getId()){
+            case R.id.seek_qsgd:
+                et_qsgd.setText(progress+"");
+                break;
+            case R.id.seek_gdjg:
+                et_gdjg.setText(progress+"");
+                break;
+            case R.id.seek_jcds:
+                et_jcds.setText(progress+"");
+                break;
+            case R.id.seek_ddcjsj:
+                et_ddcjsj.setText(progress+"");
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
     }
 
 }
