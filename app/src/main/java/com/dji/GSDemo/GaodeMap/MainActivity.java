@@ -121,7 +121,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private Marker locationMarker;
     private Spinner mission_type,mission_mode;
     private EditText jingdu,weidu,mission_name,mission_addr,et_qsgd,et_gdjg,et_jcds,et_ddcjsj;
-    private Button btn_smap,btn_weixing,to_option2,to_option3,setPoint;
+    private Button btn_smap,btn_weixing,to_option2,to_option3,setPoint,setplane;
     private String task_name,task_addr;
     private ImageView to_option1,backto_option2;
     private ScrollView option1,option2,option3;
@@ -201,6 +201,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         jingdu = (EditText) findViewById(R.id.jingdu);
         weidu = (EditText) findViewById(R.id.weidu);
         setPoint = (Button) findViewById(R.id.setPoint);
+        setplane = (Button) findViewById(R.id.setplane);
         to_option3 = (Button) findViewById(R.id.to_option3);
         to_option1 = (ImageView) findViewById(R.id.to_option1);
         backto_option2 = (ImageView) findViewById(R.id.backto_option2);
@@ -215,6 +216,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         to_option1.setOnClickListener(this);
         to_option3.setOnClickListener(this);
         setPoint.setOnClickListener(this);
+        setplane.setOnClickListener(this);
         to_option2.setOnClickListener(this);
         locate.setOnClickListener(this);
         add.setOnClickListener(this);
@@ -412,6 +414,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             //--mtr
             BasicPointLat = point.latitude;
             BasicPointLng = point.longitude;
+
+            weidu.setText(BasicPointLat+"");
+            jingdu.setText(BasicPointLng+"");
             //--
             /*
             Waypoint mWaypoint = new Waypoint(point.latitude, point.longitude, altitude);
@@ -533,6 +538,13 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 }
                 LatLng latLng = new LatLng(Double.parseDouble(j),Double.parseDouble(w));
                 aMap.addMarker(new MarkerOptions().position(latLng).title(task_name));
+                markWaypoint(latLng);
+                setResultToToast(latLng.toString());
+                break;
+            case R.id.setplane:
+                //LatLng pos = new LatLng(droneLocationLat, droneLocationLng);
+                weidu.setText(droneLocationLat+"");
+                jingdu.setText(droneLocationLng+"");
                 break;
             case R.id.to_option3:
                 option1.setVisibility(View.GONE);
