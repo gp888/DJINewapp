@@ -530,17 +530,17 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 //                setMapClickListener();
                 break;
             case R.id.setPoint:
-                String j = jingdu.getText().toString();
                 String w = weidu.getText().toString();
+                String j = jingdu.getText().toString();
+
                 if(j.isEmpty() || w.isEmpty()){
                     Toast.makeText(this,"经纬度不能为空",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                LatLng latLng = new LatLng(Double.parseDouble(j),Double.parseDouble(w));
+                LatLng latLng = new LatLng(Double.parseDouble(w),Double.parseDouble(j));
                 aMap.addMarker(new MarkerOptions().position(latLng).title(task_name));
-                markWaypoint(latLng);
-                setResultToToast(latLng.toString());
-                setResultToToast("made");
+                //markWaypoint(latLng);
+
                 break;
             case R.id.setplane:
                 //LatLng pos = new LatLng(droneLocationLat, droneLocationLng);
