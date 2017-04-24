@@ -124,13 +124,20 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private Marker locationMarker;
     private Spinner mission_type;
 
-    private EditText jingdu,weidu,mission_name,mission_addr,et_qsgd,et_gdjg,et_jcds,et_ddcjsj,et_jcgd,et_jcfxsd,et_hrbj;
+    private EditText jingdu,weidu,mission_name,mission_addr,
+            hv_high,hv_interval,hv_numbers,hv_time,
+            mv_high,mv_interval,mv_speed,
+            hs_high,hs_numbers,hs_radius,hs_time,
+            ms_high,ms_radius,ms_speed;
     private Button btn_smap,btn_weixing,to_option2,to_option3,setPoint,setplane,btn_qf;
 
     private String task_name,task_addr;
     private ImageView to_option1,backto_option2;
     private ScrollView option1,option2,option3;
-    private SeekBar seek_gdjg,seek_jcds,seek_ddcjsj,seek_qsgd,seek_jcgd,seek_jcfxsd,seek_hrbj;
+    private SeekBar seek_hv_high,seek_hv_interval,seek_hv_numbers,seek_hv_time,
+            seek_mv_high,seek_mv_interval,seek_mv_speed,
+            seek_hs_high,seek_hs_numbers,seek_hs_radius,seek_hs_time,
+            seek_ms_high,seek_ms_radius,seek_ms_speed;
 
     //--mtr
     private MissionControl missionControl;
@@ -218,35 +225,81 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         option3 = (ScrollView) findViewById(R.id.option3);
         mission_name = (EditText) findViewById(R.id.mission_name);
         mission_addr = (EditText) findViewById(R.id.mission_addr);
-        et_qsgd = (EditText) findViewById(R.id.et_qsgd);
-        et_gdjg = (EditText) findViewById(R.id.et_gdjg);
-        et_jcds = (EditText) findViewById(R.id.et_jcds);
-        et_ddcjsj = (EditText) findViewById(R.id.et_ddcjsj);
-        et_jcgd = (EditText) findViewById(R.id.et_jcgd);
-        et_jcfxsd = (EditText) findViewById(R.id.et_jcfxsd);
-        et_hrbj = (EditText) findViewById(R.id.et_hrbj);
-        seek_jcgd = (SeekBar) findViewById(R.id.seek_jcgd);
-        seek_jcfxsd = (SeekBar) findViewById(R.id.seek_jcfxsd);
-        seek_hrbj = (SeekBar) findViewById(R.id.seek_hrbj);
-        seek_gdjg = (SeekBar) findViewById(R.id.seek_gdjg);
-        seek_jcds = (SeekBar) findViewById(R.id.seek_jcds);
-        seek_ddcjsj = (SeekBar) findViewById(R.id.seek_ddcjsj);
-        seek_qsgd = (SeekBar) findViewById(R.id.seek_qsgd);
 
-        et_qsgd.addTextChangedListener(this);
-        et_gdjg.addTextChangedListener(this);
-        et_jcds.addTextChangedListener(this);
-        et_ddcjsj.addTextChangedListener(this);
-        et_jcgd.addTextChangedListener(this);
-        et_jcfxsd.addTextChangedListener(this);
-        et_hrbj.addTextChangedListener(this);
-        seek_gdjg.setOnSeekBarChangeListener(this);
-        seek_jcds.setOnSeekBarChangeListener(this);
-        seek_ddcjsj.setOnSeekBarChangeListener(this);
-        seek_qsgd.setOnSeekBarChangeListener(this);
-        seek_jcgd.setOnSeekBarChangeListener(this);
-        seek_jcfxsd.setOnSeekBarChangeListener(this);
-        seek_hrbj.setOnSeekBarChangeListener(this);
+        hv_high = (EditText) findViewById(R.id.hv_high);
+        hv_interval = (EditText) findViewById(R.id.hv_interval);
+        hv_numbers = (EditText) findViewById(R.id.hv_numbers);
+        hv_time = (EditText) findViewById(R.id.hv_time);
+
+        mv_high = (EditText) findViewById(R.id.mv_high);
+        mv_interval = (EditText) findViewById(R.id.mv_interval);
+        mv_speed = (EditText) findViewById(R.id.mv_speed);
+
+        hs_high = (EditText) findViewById(R.id.hs_high);
+        hs_numbers = (EditText) findViewById(R.id.hs_numbers);
+        hs_radius = (EditText) findViewById(R.id.hs_radius);
+        hs_time = (EditText) findViewById(R.id.hs_time);
+
+        ms_high = (EditText) findViewById(R.id.ms_high);
+        ms_radius = (EditText) findViewById(R.id.ms_radius);
+        ms_speed = (EditText) findViewById(R.id.ms_speed);
+
+        seek_hv_high = (SeekBar) findViewById(R.id.seek_hv_high);
+        seek_hv_interval = (SeekBar) findViewById(R.id.seek_hv_interval);
+        seek_hv_numbers = (SeekBar) findViewById(R.id.seek_hv_numbers);
+        seek_hv_time = (SeekBar) findViewById(R.id.seek_hv_time);
+
+        seek_mv_high = (SeekBar) findViewById(R.id.seek_mv_high);
+        seek_mv_interval = (SeekBar) findViewById(R.id.seek_mv_interval);
+        seek_mv_speed = (SeekBar) findViewById(R.id.seek_mv_speed);
+
+        seek_hs_high = (SeekBar) findViewById(R.id.seek_hs_high);
+        seek_hs_numbers = (SeekBar) findViewById(R.id.seek_hs_numbers);
+        seek_hs_radius = (SeekBar) findViewById(R.id.seek_hs_radius);
+        seek_hs_time = (SeekBar) findViewById(R.id.seek_hs_time);
+
+        seek_ms_high = (SeekBar) findViewById(R.id.seek_ms_high);
+        seek_ms_radius = (SeekBar) findViewById(R.id.seek_ms_radius);
+        seek_ms_speed = (SeekBar) findViewById(R.id.seek_ms_speed);
+
+
+
+        hv_high.addTextChangedListener(this);
+        hv_interval.addTextChangedListener(this);
+        hv_numbers.addTextChangedListener(this);
+        hv_time.addTextChangedListener(this);
+
+        mv_high.addTextChangedListener(this);
+        mv_interval.addTextChangedListener(this);
+        mv_speed.addTextChangedListener(this);
+
+        hs_high.addTextChangedListener(this);
+        hs_numbers.addTextChangedListener(this);
+        hs_radius.addTextChangedListener(this);
+        hs_time.addTextChangedListener(this);
+
+        ms_high.addTextChangedListener(this);
+        ms_radius.addTextChangedListener(this);
+        ms_speed.addTextChangedListener(this);
+
+        seek_hv_high.setOnSeekBarChangeListener(this);
+        seek_hv_interval.setOnSeekBarChangeListener(this);
+        seek_hv_numbers.setOnSeekBarChangeListener(this);
+        seek_hv_time.setOnSeekBarChangeListener(this);
+
+        seek_mv_high.setOnSeekBarChangeListener(this);
+        seek_mv_interval.setOnSeekBarChangeListener(this);
+        seek_mv_speed.setOnSeekBarChangeListener(this);
+
+        seek_hs_high.setOnSeekBarChangeListener(this);
+        seek_hs_numbers.setOnSeekBarChangeListener(this);
+        seek_hs_radius.setOnSeekBarChangeListener(this);
+        seek_hs_time.setOnSeekBarChangeListener(this);
+
+        seek_ms_high.setOnSeekBarChangeListener(this);
+        seek_ms_radius.setOnSeekBarChangeListener(this);
+        seek_ms_speed.setOnSeekBarChangeListener(this);
+
         backto_option2.setOnClickListener(this);
         to_option1.setOnClickListener(this);
         to_option3.setOnClickListener(this);
@@ -1203,31 +1256,32 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         switch (seekBar.getId()){
             case R.id.seek_qsgd:
-                et_qsgd.setText(progress+"");
+//                et_qsgd.setText(progress+"");
+
                 movsud.setQsgd_ptr(progress);
                 break;
             case R.id.seek_gdjg:
-                et_gdjg.setText(progress+"");
+//                et_gdjg.setText(progress+"");
                 movsud.setGdjg_ptr(progress);
                 break;
             case R.id.seek_jcds:
-                et_jcds.setText(progress+"");
+//                et_jcds.setText(progress+"");
                 movsud.setJcds_ptr(progress);
                 break;
             case R.id.seek_ddcjsj:
-                et_ddcjsj.setText(progress+"");
+//                et_ddcjsj.setText(progress+"");
                 movsud.setDdcjsj_ptr(progress);
                 break;
             case R.id.seek_jcgd:
-                et_jcgd.setText(progress+"");
+//                et_jcgd.setText(progress+"");
                 movsud.setJcgd_ptr(progress);
                 break;
             case R.id.seek_jcfxsd:
-                et_jcfxsd.setText(progress+"");
+//                et_jcfxsd.setText(progress+"");
                 movsud.setJcfxsd_ptr(progress);
                 break;
             case R.id.seek_hrbj:
-                et_hrbj.setText(progress+"");
+//                et_hrbj.setText(progress+"");
                 movsud.setHrbj_ptr(progress);
                 break;
             default:

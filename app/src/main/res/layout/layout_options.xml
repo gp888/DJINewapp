@@ -182,9 +182,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="起始高度(2-120m):"/>
+                    android:text="起始高度(1.5-120m):"/>
                 <AutoCompleteTextView
-                    android:id="@+id/et_qsgd"
+                    android:id="@+id/hv_high"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:inputType="number"
@@ -195,7 +195,7 @@
             </LinearLayout>
 
             <SeekBar
-                android:id="@+id/seek_qsgd"
+                android:id="@+id/seek_hv_high"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:max="120"
@@ -208,9 +208,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="高度间隔(1-50m):"/>
+                    android:text="高度间隔(1-30m):"/>
                 <AutoCompleteTextView
-                    android:id="@+id/et_gdjg"
+                    android:id="@+id/hv_interval"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:inputType="number"
@@ -220,7 +220,7 @@
                     android:imeOptions="actionDone"/>
             </LinearLayout>
             <SeekBar
-                android:id="@+id/seek_gdjg"
+                android:id="@+id/seek_hv_interval"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:max="120"
@@ -233,9 +233,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="检测点数(2-99个):"/>
+                    android:text="检测点数(4-50个):"/>
                 <AutoCompleteTextView
-                    android:id="@+id/et_jcds"
+                    android:id="@+id/hv_numbers"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:inputType="number"
@@ -245,7 +245,7 @@
                     android:imeOptions="actionDone"/>
             </LinearLayout>
             <SeekBar
-                android:id="@+id/seek_jcds"
+                android:id="@+id/seek_hv_numbers"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:max="99"
@@ -257,9 +257,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="单点采集时间(1-180s):"/>
+                    android:text="单点采集时间(10-180s):"/>
                 <AutoCompleteTextView
-                    android:id="@+id/et_ddcjsj"
+                    android:id="@+id/hv_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:inputType="number"
@@ -269,11 +269,38 @@
                     android:imeOptions="actionDone"/>
             </LinearLayout>
             <SeekBar
-                android:id="@+id/seek_ddcjsj"
+                android:id="@+id/seek_hv_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:max="180"
                 android:progress="20"/>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="起始高度(1.5-120m):"/>
+                <AutoCompleteTextView
+                    android:id="@+id/mv_high"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:ems="2"
+                    android:hint="10"
+                    android:imeOptions="actionDone"/>
+            </LinearLayout>
+
+            <SeekBar
+                android:id="@+id/seek_mv_high"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="120"
+                android:progress="10"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -282,9 +309,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="检测高度(1-120m):"/>
+                    android:text="检测高度(1-100m):"/>
                 <AutoCompleteTextView
-                    android:id="@+id/et_jcgd"
+                    android:id="@+id/mv_interval"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:inputType="number"
@@ -294,7 +321,7 @@
                     android:imeOptions="actionDone"/>
             </LinearLayout>
             <SeekBar
-                android:id="@+id/seek_jcgd"
+                android:id="@+id/seek_mv_interval"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:max="120"
@@ -306,9 +333,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="监测飞行速度(10-50cm/s):"/>
+                    android:text="飞行速度(10-100cm/s):"/>
                 <AutoCompleteTextView
-                    android:id="@+id/et_jcfxsd"
+                    android:id="@+id/mv_speed"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:inputType="number"
@@ -318,11 +345,63 @@
                     android:imeOptions="actionDone"/>
             </LinearLayout>
             <SeekBar
-                android:id="@+id/seek_jcfxsd"
+                android:id="@+id/seek_mv_speed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:max="50"
                 android:progress="50"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="飞行高度(1.5-120m):"/>
+                <AutoCompleteTextView
+                    android:id="@+id/hs_high"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:ems="2"
+                    android:hint="10"
+                    android:imeOptions="actionDone"/>
+            </LinearLayout>
+
+            <SeekBar
+                android:id="@+id/seek_hs_high"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="120"
+                android:progress="10"/>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="检测点数(4-50个):"/>
+                <AutoCompleteTextView
+                    android:id="@+id/hs_numbers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:ems="2"
+                    android:hint="5"
+                    android:imeOptions="actionDone"/>
+            </LinearLayout>
+            <SeekBar
+                android:id="@+id/seek_hs_numbers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="99"
+                android:progress="5"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -333,7 +412,7 @@
                     android:layout_height="wrap_content"
                     android:text="环绕半径(4-50m):"/>
                 <AutoCompleteTextView
-                    android:id="@+id/et_hrbj"
+                    android:id="@+id/hs_radius"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:inputType="number"
@@ -343,12 +422,111 @@
                     android:imeOptions="actionDone"/>
             </LinearLayout>
             <SeekBar
-                android:id="@+id/seek_hrbj"
+                android:id="@+id/seek_hs_radius"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="50"
+                android:progress="10"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="单点采集时间(10-180s):"/>
+                <AutoCompleteTextView
+                    android:id="@+id/hs_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:ems="2"
+                    android:hint="20"
+                    android:imeOptions="actionDone"/>
+            </LinearLayout>
+            <SeekBar
+                android:id="@+id/seek_hs_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="180"
+                android:progress="20"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="飞行高度(1.5-120m):"/>
+                <AutoCompleteTextView
+                    android:id="@+id/ms_high"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:ems="2"
+                    android:hint="10"
+                    android:imeOptions="actionDone"/>
+            </LinearLayout>
+
+            <SeekBar
+                android:id="@+id/seek_ms_high"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="120"
+                android:progress="10"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="环绕半径(4-50m):"/>
+                <AutoCompleteTextView
+                    android:id="@+id/ms_radius"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:ems="2"
+                    android:hint="10"
+                    android:imeOptions="actionDone"/>
+            </LinearLayout>
+            <SeekBar
+                android:id="@+id/seek_ms_radius"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:max="50"
                 android:progress="10"/>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="飞行速度(10-100cm/s):"/>
+                <AutoCompleteTextView
+                    android:id="@+id/ms_speed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:ems="2"
+                    android:hint="50"
+                    android:imeOptions="actionDone"/>
+            </LinearLayout>
+            <SeekBar
+                android:id="@+id/seek_ms_speed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="50"
+                android:progress="50"/>
             <Button
                 android:id="@+id/to_option3"
                 android:layout_width="wrap_content"
