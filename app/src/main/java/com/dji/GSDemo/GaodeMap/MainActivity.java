@@ -12,6 +12,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -87,7 +89,7 @@ import dji.sdk.products.Aircraft;
 import dji.sdk.sdkmanager.DJISDKManager;
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener,
-        OnMapClickListener,LocationSource,AMapLocationListener,SeekBar.OnSeekBarChangeListener {
+        OnMapClickListener,LocationSource,AMapLocationListener,SeekBar.OnSeekBarChangeListener,TextWatcher{
 
     protected static final String TAG = "MainActivity";
 
@@ -120,16 +122,20 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public AMapLocationClient mLocationClient;
     private AMapLocationClientOption mLocationOption;
     private Marker locationMarker;
-    private Spinner mission_type;
-    private EditText jingdu,weidu,mission_name,mission_addr,et_qsgd,et_gdjg,et_jcds,et_ddcjsj;
-    private Button btn_smap,btn_weixing,to_option2,to_option3,setPoint;
+    private Spinner mission_type,mission_mode;
+
+    private EditText jingdu,weidu,mission_name,mission_addr,et_qsgd,et_gdjg,et_jcds,et_ddcjsj,et_jcgd,et_jcfxsd,et_hrbj;
+    private Button btn_smap,btn_weixing,to_option2,to_option3,setPoint,setplane,btn_qf;
+
     private String task_name,task_addr;
     private ImageView to_option1,backto_option2;
     private ScrollView option1,option2,option3;
-    private SeekBar seek_gdjg,seek_jcds,seek_ddcjsj,seek_qsgd;
+    private SeekBar seek_gdjg,seek_jcds,seek_ddcjsj,seek_qsgd,seek_jcgd,seek_jcfxsd,seek_hrbj;
 
     //--mtr
     private MissionControl missionControl;
+    MoveSurroundMode movsud = new MoveSurroundMode();
+    private MissionMode mMissionMode = MissionMode.FREEMODE;
     private double BasicPointLat = 22;
     private double BasicPointLng = 113;//--WGS84
     protected double homeLatitude = 181;
@@ -198,11 +204,14 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         mydatashow = (TextView) findViewById(R.id.datashow);
         mission_type = (Spinner) findViewById(R.id.mission_type);
+        mission_mode = (Spinner) findViewById(R.id.mission_mode);
         to_option2 = (Button) findViewById(R.id.to_option2);
         jingdu = (EditText) findViewById(R.id.jingdu);
         weidu = (EditText) findViewById(R.id.weidu);
         setPoint = (Button) findViewById(R.id.setPoint);
+        setplane = (Button) findViewById(R.id.setplane);
         to_option3 = (Button) findViewById(R.id.to_option3);
+        btn_qf = (Button) findViewById(R.id.btn_qf);
         to_option1 = (ImageView) findViewById(R.id.to_option1);
         backto_option2 = (ImageView) findViewById(R.id.backto_option2);
         option1 = (ScrollView) findViewById(R.id.option1);
@@ -214,19 +223,37 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         et_gdjg = (EditText) findViewById(R.id.et_gdjg);
         et_jcds = (EditText) findViewById(R.id.et_jcds);
         et_ddcjsj = (EditText) findViewById(R.id.et_ddcjsj);
+        et_jcgd = (EditText) findViewById(R.id.et_jcgd);
+        et_jcfxsd = (EditText) findViewById(R.id.et_jcfxsd);
+        et_hrbj = (EditText) findViewById(R.id.et_hrbj);
+        seek_jcgd = (SeekBar) findViewById(R.id.seek_jcgd);
+        seek_jcfxsd = (SeekBar) findViewById(R.id.seek_jcfxsd);
+        seek_hrbj = (SeekBar) findViewById(R.id.seek_hrbj);
         seek_gdjg = (SeekBar) findViewById(R.id.seek_gdjg);
         seek_jcds = (SeekBar) findViewById(R.id.seek_jcds);
         seek_ddcjsj = (SeekBar) findViewById(R.id.seek_ddcjsj);
         seek_qsgd = (SeekBar) findViewById(R.id.seek_qsgd);
 
+        et_qsgd.addTextChangedListener(this);
+        et_gdjg.addTextChangedListener(this);
+        et_jcds.addTextChangedListener(this);
+        et_ddcjsj.addTextChangedListener(this);
+        et_jcgd.addTextChangedListener(this);
+        et_jcfxsd.addTextChangedListener(this);
+        et_hrbj.addTextChangedListener(this);
         seek_gdjg.setOnSeekBarChangeListener(this);
         seek_jcds.setOnSeekBarChangeListener(this);
         seek_ddcjsj.setOnSeekBarChangeListener(this);
         seek_qsgd.setOnSeekBarChangeListener(this);
+        seek_jcgd.setOnSeekBarChangeListener(this);
+        seek_jcfxsd.setOnSeekBarChangeListener(this);
+        seek_hrbj.setOnSeekBarChangeListener(this);
         backto_option2.setOnClickListener(this);
         to_option1.setOnClickListener(this);
         to_option3.setOnClickListener(this);
+        btn_qf.setOnClickListener(this);
         setPoint.setOnClickListener(this);
+        setplane.setOnClickListener(this);
         to_option2.setOnClickListener(this);
         locate.setOnClickListener(this);
         add.setOnClickListener(this);
@@ -238,6 +265,34 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         mission_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                if(pos >=1 && pos <= 3){
+                    mission_mode.setVisibility(View.VISIBLE);
+
+                    if(pos == 1)
+                        mMissionMode = MissionMode.VERTICAL_HOVER;
+                    else if(pos == 2)
+                        mMissionMode = MissionMode.SURROUND_MOVE;
+                    else if(pos == 3)
+                        mMissionMode = MissionMode.VERTICAL_HOVER;
+                }else {
+                    mission_mode.setVisibility(View.GONE);
+
+                    if(pos == 4)
+                        mMissionMode = MissionMode.SINGLEPOINT;
+                    else if(pos == 5)
+                        mMissionMode = MissionMode.FREEMODE;
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Another interface callback
+            }
+        });
+        mission_mode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                if(pos == 2)
+                    mMissionMode = MissionMode.VERTICAL_MOVE;
 
             }
             @Override
@@ -420,6 +475,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             //--mtr
             BasicPointLat = point.latitude;
             BasicPointLng = point.longitude;
+
+            weidu.setText(BasicPointLat+"");
+            jingdu.setText(BasicPointLng+"");
             //--
             /*
             Waypoint mWaypoint = new Waypoint(point.latitude, point.longitude, altitude);
@@ -533,16 +591,26 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 //                setMapClickListener();
                 break;
             case R.id.setPoint:
-                String j = jingdu.getText().toString();
                 String w = weidu.getText().toString();
+                String j = jingdu.getText().toString();
+
                 if(j.isEmpty() || w.isEmpty()){
                     Toast.makeText(this,"经纬度不能为空",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                LatLng latLng = new LatLng(Double.parseDouble(j),Double.parseDouble(w));
+                LatLng latLng = new LatLng(Double.parseDouble(w),Double.parseDouble(j));
                 aMap.addMarker(new MarkerOptions().position(latLng).title(task_name));
+                movsud.setBasicPoint(latLng.latitude,latLng.longitude);
+                //markWaypoint(latLng);
+
+                break;
+            case R.id.setplane:
+                //LatLng pos = new LatLng(droneLocationLat, droneLocationLng);
+                weidu.setText(droneLocationLat+"");
+                jingdu.setText(droneLocationLng+"");
                 break;
             case R.id.to_option3:
+                setMission();
                 option1.setVisibility(View.GONE);
                 option2.setVisibility(View.GONE);
                 option3.setVisibility(View.VISIBLE);
@@ -559,6 +627,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 option2.setVisibility(View.VISIBLE);
                 option3.setVisibility(View.GONE);
 //                setMapClickListener();
+                break;
+            case R.id.btn_qf:
+                startMission();
+                break;
             default:
                 break;
         }
@@ -756,17 +828,51 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     }
 
-    private void configMission(){
+    private void configMoveVerticalMode(){
+        if (waypointMissionBuilder == null) {
+            waypointMissionBuilder = new WaypointMission.Builder();
+        }
+
+        final Waypoint startWaypoint = new Waypoint(movsud.BasicLat,movsud.BasicLng,
+                movsud.qsgd_ptr);
+        startWaypoint.addAction(new WaypointAction(WaypointActionType.STAY, 1000));
+        waypointList.add(startWaypoint);
+
+        final Waypoint endWaypoint = new Waypoint(movsud.BasicLat,movsud.BasicLng,
+                movsud.qsgd_ptr + movsud.gdjg_ptr);
+        endWaypoint.addAction(new WaypointAction(WaypointActionType.STAY, 1000));
+        waypointList.add(endWaypoint);
+
+        waypointMissionBuilder.waypointList(waypointList).waypointCount(waypointList.size());
+
+
+
+
+        waypointMissionBuilder.finishedAction(WaypointMissionFinishedAction.GO_HOME)
+                .headingMode(WaypointMissionHeadingMode.AUTO)
+                .autoFlightSpeed(movsud.jcfxsd_ptr)
+                .maxFlightSpeed(movsud.jcfxsd_ptr)
+                .flightPathMode(WaypointMissionFlightPathMode.NORMAL);
+
+        DJIError error = getWaypointMissionOperator().loadMission(waypointMissionBuilder.build());
+        if (error == null) {
+            setResultToToast("loadWaypoint succeeded");
+        } else {
+            setResultToToast("loadWaypoint failed " + error.getDescription());
+        }
+    }
+
+    private void configHoverVerticalMode(){
         //Waypoint mWaypoint = new Waypoint(BasicPointLat, BasicPointLng, altitude);
         if (waypointMissionBuilder == null) {
             waypointMissionBuilder = new WaypointMission.Builder();
         }
 
-        for(int i=0; i < TestPoints; i++){
+        for(int i=0; i < movsud.jcds_ptr; i++){
 
-            final Waypoint eachWaypoint = new Waypoint(BasicPointLat,BasicPointLng,
-                    StartHigh + Interval * i);
-            eachWaypoint.addAction(new WaypointAction(WaypointActionType.STAY, SinglePointTime * 1000));
+            final Waypoint eachWaypoint = new Waypoint(movsud.BasicLat,movsud.BasicLng,
+                    movsud.qsgd_ptr + movsud.gdjg_ptr * i);
+            eachWaypoint.addAction(new WaypointAction(WaypointActionType.STAY, (int)movsud.ddcjsj_ptr * 1000));
             waypointList.add(eachWaypoint);
             waypointMissionBuilder.waypointList(waypointList).waypointCount(waypointList.size());
 
@@ -790,6 +896,40 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         }
 
     }
+
+    private void configHoverSurroundMode(){
+        if (waypointMissionBuilder == null) {
+            waypointMissionBuilder = new WaypointMission.Builder();
+        }
+
+        for(int i=0; i < movsud.jcds_ptr; i++){
+
+            final Waypoint eachWaypoint = new Waypoint(movsud.BasicLat,movsud.BasicLng,
+                    movsud.qsgd_ptr + movsud.gdjg_ptr * i);
+            eachWaypoint.addAction(new WaypointAction(WaypointActionType.STAY, (int)movsud.ddcjsj_ptr * 1000));
+            waypointList.add(eachWaypoint);
+            waypointMissionBuilder.waypointList(waypointList).waypointCount(waypointList.size());
+
+
+        }
+        //waypointMissionBuilder.waypointList(waypointList).waypointCount( TestPoints);
+
+
+        waypointMissionBuilder.finishedAction(WaypointMissionFinishedAction.GO_HOME)
+                .headingMode(WaypointMissionHeadingMode.AUTO)
+                .autoFlightSpeed(5f)
+                .maxFlightSpeed(10f)
+                .flightPathMode(WaypointMissionFlightPathMode.NORMAL);
+
+        DJIError error = getWaypointMissionOperator().loadMission(waypointMissionBuilder.build());
+        if (error == null) {
+            setResultToToast("loadWaypoint succeeded");
+        } else {
+            setResultToToast("loadWaypoint failed " + error.getDescription());
+        }
+    }
+
+
     private void configTimeline() {
         //if (!GeneralUtils.checkGpsCoordinate(homeLatitude, homeLongitude)) {
         //    ToastUtils.setResultToToast("No home point!!!");
@@ -813,23 +953,23 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
 
         //Step 2: start a hotpoint mission
-        setResultToToast("Step 5: start a hotpoint mission to surround 360 degree");
+        setResultToToast("Step 2: start a hotpoint mission to surround 360 degree");
         HotpointMission hotpointMission = new HotpointMission();
-        hotpointMission.setHotpoint(new LocationCoordinate2D(BasicPointLat,BasicPointLng));
-        hotpointMission.setAltitude(40);
-        hotpointMission.setRadius(20);
-        hotpointMission.setAngularVelocity(10);
+        hotpointMission.setHotpoint(new LocationCoordinate2D(movsud.BasicLat,movsud.BasicLng));
+        hotpointMission.setAltitude(movsud.jcgd_ptr);
+        hotpointMission.setRadius(movsud.hrbj_ptr);
+        hotpointMission.setAngularVelocity(movsud.jcfxsd_ptr);
         HotpointStartPoint startPoint = HotpointStartPoint.NEAREST;
         hotpointMission.setStartPoint(startPoint);
         HotpointHeading heading = HotpointHeading.TOWARDS_HOT_POINT;
         hotpointMission.setHeading(heading);
-        elements.add(new HotpointAction(hotpointMission, 360));
+        elements.add(new HotpointAction(hotpointMission, 361));
 
         //Step 3: Go 10 meters from home point
     //    setResultToToast("Step 3: Go 10 meters from home point");
     //    elements.add(new GoToAction(new LocationCoordinate2D(homeLatitude, homeLongitude), 20));
         //Step 4: go back home
-        setResultToToast("Step 6: go back home");
+        setResultToToast("Step 3: go back home");
         elements.add(new GoHomeAction());
 
         if (missionControl.scheduledCount() > 0) {
@@ -922,7 +1062,67 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         return  desLatLng;
     }
 
+    private void setMission(){
 
+        switch (mMissionMode){
+            case VERTICAL_HOVER:
+                configHoverVerticalMode();
+                uploadWayPointMission();
+                break;
+            case VERTICAL_MOVE:
+                configMoveVerticalMode();
+                uploadWayPointMission();
+                break;
+            case SURROUND_HOVER:
+                configHoverSurroundMode();
+                uploadWayPointMission();
+                break;
+            case SURROUND_MOVE:
+                configTimeline();
+                break;
+            case HORIZONTAL_HOVER:
+                break;
+            case HORIZONTAL_MOVE:
+                break;
+            case SINGLEPOINT:
+                break;
+            case FREEMODE:
+                break;
+            case SPECIAL_MODE:
+                break;
+            default:
+                break;
+        }
+    }
+
+    private  void startMission(){
+        switch (mMissionMode){
+            case VERTICAL_HOVER:
+                startWaypointMission();
+                break;
+            case VERTICAL_MOVE:
+                startWaypointMission();
+                break;
+            case SURROUND_HOVER:
+                startWaypointMission();
+                break;
+            case SURROUND_MOVE:
+                startTimeline();
+                break;
+            case HORIZONTAL_HOVER:
+                break;
+            case HORIZONTAL_MOVE:
+                break;
+            case SINGLEPOINT:
+                break;
+            case FREEMODE:
+                break;
+            case SPECIAL_MODE:
+                break;
+            default:
+                break;
+        }
+    }
 
 
 
@@ -977,7 +1177,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 //                        "纬度：" + aMapLocation.getLongitude() +
 //                        "地址：" + aMapLocation.getCountry() + "," + aMapLocation.getProvince()
 //                        + "," + aMapLocation.getCity() + "," + aMapLocation.getAddress());
-                mission_addr.setText(aMapLocation.getProvince()+aMapLocation.getCity()+aMapLocation.getAddress());
                 LatLng latLng = new LatLng(aMapLocation.getLatitude(), aMapLocation.getLongitude());
 
                 //添加Marker显示定位位置
@@ -1003,15 +1202,31 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         switch (seekBar.getId()){
             case R.id.seek_qsgd:
                 et_qsgd.setText(progress+"");
+                movsud.setQsgd_ptr(progress);
                 break;
             case R.id.seek_gdjg:
                 et_gdjg.setText(progress+"");
+                movsud.setGdjg_ptr(progress);
                 break;
             case R.id.seek_jcds:
                 et_jcds.setText(progress+"");
+                movsud.setJcds_ptr(progress);
                 break;
             case R.id.seek_ddcjsj:
                 et_ddcjsj.setText(progress+"");
+                movsud.setDdcjsj_ptr(progress);
+                break;
+            case R.id.seek_jcgd:
+                et_jcgd.setText(progress+"");
+                movsud.setJcgd_ptr(progress);
+                break;
+            case R.id.seek_jcfxsd:
+                et_jcfxsd.setText(progress+"");
+                movsud.setJcfxsd_ptr(progress);
+                break;
+            case R.id.seek_hrbj:
+                et_hrbj.setText(progress+"");
+                movsud.setHrbj_ptr(progress);
                 break;
             default:
                 break;
@@ -1028,4 +1243,18 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     }
 
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+
+    }
 }
