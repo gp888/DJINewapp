@@ -264,6 +264,37 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         mission_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                switch(pos){
+                    case 1:
+                        mMissionMode = MissionMode.VERTICAL_HOVER;
+                        break;
+                    case 2:
+                        mMissionMode = MissionMode.VERTICAL_MOVE;
+                        break;
+                    case 3:
+                        mMissionMode = MissionMode.SURROUND_HOVER;
+                        break;
+                    case 4:
+                        mMissionMode = MissionMode.SURROUND_MOVE;
+                        break;
+                    case 5:
+                        mMissionMode = MissionMode.HORIZONTAL_HOVER;
+                        break;
+                    case 6:
+                        mMissionMode = MissionMode.HORIZONTAL_MOVE;
+                        break;
+                    case 7:
+                        mMissionMode = MissionMode.SINGLEPOINT;
+                        break;
+                    case 8:
+                        mMissionMode = MissionMode.FREEMODE;
+                        break;
+                    case 9:
+                        mMissionMode = MissionMode.SPECIAL_MODE;
+                        break;
+                    default:
+                        break;
+                }
 
             }
             @Override
