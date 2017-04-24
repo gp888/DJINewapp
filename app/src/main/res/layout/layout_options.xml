@@ -58,21 +58,13 @@
                 android:entries="@array/missiontype"
                 android:layout_marginTop="20dp">
             </Spinner>
-            <Spinner
-                android:id="@+id/mission_mode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:entries="@array/caiji"
-                android:layout_marginTop="20dp"
-                android:visibility="gone">
-            </Spinner>
             <Button
                 android:id="@+id/to_option2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="设置参数"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginBottom="10dp"/>
         </LinearLayout>
     </ScrollView>
