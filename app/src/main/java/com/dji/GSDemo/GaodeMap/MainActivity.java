@@ -122,7 +122,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public AMapLocationClient mLocationClient;
     private AMapLocationClientOption mLocationOption;
     private Marker locationMarker;
-    private Spinner mission_type,mission_mode;
+    private Spinner mission_type;
 
     private EditText jingdu,weidu,mission_name,mission_addr,et_qsgd,et_gdjg,et_jcds,et_ddcjsj,et_jcgd,et_jcfxsd,et_hrbj;
     private Button btn_smap,btn_weixing,to_option2,to_option3,setPoint,setplane,btn_qf;
@@ -204,7 +204,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         mydatashow = (TextView) findViewById(R.id.datashow);
         mission_type = (Spinner) findViewById(R.id.mission_type);
-        mission_mode = (Spinner) findViewById(R.id.mission_mode);
         to_option2 = (Button) findViewById(R.id.to_option2);
         jingdu = (EditText) findViewById(R.id.jingdu);
         weidu = (EditText) findViewById(R.id.weidu);
@@ -265,34 +264,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         mission_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                if(pos >=1 && pos <= 3){
-                    mission_mode.setVisibility(View.VISIBLE);
-
-                    if(pos == 1)
-                        mMissionMode = MissionMode.VERTICAL_HOVER;
-                    else if(pos == 2)
-                        mMissionMode = MissionMode.SURROUND_MOVE;
-                    else if(pos == 3)
-                        mMissionMode = MissionMode.VERTICAL_HOVER;
-                }else {
-                    mission_mode.setVisibility(View.GONE);
-
-                    if(pos == 4)
-                        mMissionMode = MissionMode.SINGLEPOINT;
-                    else if(pos == 5)
-                        mMissionMode = MissionMode.FREEMODE;
-                }
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Another interface callback
-            }
-        });
-        mission_mode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                if(pos == 2)
-                    mMissionMode = MissionMode.VERTICAL_MOVE;
 
             }
             @Override
@@ -300,7 +271,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 // Another interface callback
             }
         });
-
     }
 
     private void initMapView() {
@@ -1177,6 +1147,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 //                        "纬度：" + aMapLocation.getLongitude() +
 //                        "地址：" + aMapLocation.getCountry() + "," + aMapLocation.getProvince()
 //                        + "," + aMapLocation.getCity() + "," + aMapLocation.getAddress());
+                mission_addr.setText(aMapLocation.getProvince()+aMapLocation.getCity()+aMapLocation.getAddress());
                 LatLng latLng = new LatLng(aMapLocation.getLatitude(), aMapLocation.getLongitude());
 
                 //添加Marker显示定位位置
