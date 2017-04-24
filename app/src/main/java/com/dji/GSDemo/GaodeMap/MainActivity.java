@@ -12,6 +12,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -87,7 +89,7 @@ import dji.sdk.products.Aircraft;
 import dji.sdk.sdkmanager.DJISDKManager;
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener,
-        OnMapClickListener,LocationSource,AMapLocationListener,SeekBar.OnSeekBarChangeListener {
+        OnMapClickListener,LocationSource,AMapLocationListener,SeekBar.OnSeekBarChangeListener,TextWatcher{
 
     protected static final String TAG = "MainActivity";
 
@@ -121,12 +123,14 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private AMapLocationClientOption mLocationOption;
     private Marker locationMarker;
     private Spinner mission_type,mission_mode;
-    private EditText jingdu,weidu,mission_name,mission_addr,et_qsgd,et_gdjg,et_jcds,et_ddcjsj;
+
+    private EditText jingdu,weidu,mission_name,mission_addr,et_qsgd,et_gdjg,et_jcds,et_ddcjsj,et_jcgd,et_jcfxsd,et_hrbj;
     private Button btn_smap,btn_weixing,to_option2,to_option3,setPoint,setplane;
+
     private String task_name,task_addr;
     private ImageView to_option1,backto_option2;
     private ScrollView option1,option2,option3;
-    private SeekBar seek_gdjg,seek_jcds,seek_ddcjsj,seek_qsgd;
+    private SeekBar seek_gdjg,seek_jcds,seek_ddcjsj,seek_qsgd,seek_jcgd,seek_jcfxsd,seek_hrbj;
 
     //--mtr
     private MissionControl missionControl;
@@ -216,15 +220,31 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         et_gdjg = (EditText) findViewById(R.id.et_gdjg);
         et_jcds = (EditText) findViewById(R.id.et_jcds);
         et_ddcjsj = (EditText) findViewById(R.id.et_ddcjsj);
+        et_jcgd = (EditText) findViewById(R.id.et_jcgd);
+        et_jcfxsd = (EditText) findViewById(R.id.et_jcfxsd);
+        et_hrbj = (EditText) findViewById(R.id.et_hrbj);
+        seek_jcgd = (SeekBar) findViewById(R.id.seek_jcgd);
+        seek_jcfxsd = (SeekBar) findViewById(R.id.seek_jcfxsd);
+        seek_hrbj = (SeekBar) findViewById(R.id.seek_hrbj);
         seek_gdjg = (SeekBar) findViewById(R.id.seek_gdjg);
         seek_jcds = (SeekBar) findViewById(R.id.seek_jcds);
         seek_ddcjsj = (SeekBar) findViewById(R.id.seek_ddcjsj);
         seek_qsgd = (SeekBar) findViewById(R.id.seek_qsgd);
 
+        et_qsgd.addTextChangedListener(this);
+        et_gdjg.addTextChangedListener(this);
+        et_jcds.addTextChangedListener(this);
+        et_ddcjsj.addTextChangedListener(this);
+        et_jcgd.addTextChangedListener(this);
+        et_jcfxsd.addTextChangedListener(this);
+        et_hrbj.addTextChangedListener(this);
         seek_gdjg.setOnSeekBarChangeListener(this);
         seek_jcds.setOnSeekBarChangeListener(this);
         seek_ddcjsj.setOnSeekBarChangeListener(this);
         seek_qsgd.setOnSeekBarChangeListener(this);
+        seek_jcgd.setOnSeekBarChangeListener(this);
+        seek_jcfxsd.setOnSeekBarChangeListener(this);
+        seek_hrbj.setOnSeekBarChangeListener(this);
         backto_option2.setOnClickListener(this);
         to_option1.setOnClickListener(this);
         to_option3.setOnClickListener(this);
@@ -1030,6 +1050,15 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             case R.id.seek_ddcjsj:
                 et_ddcjsj.setText(progress+"");
                 break;
+            case R.id.seek_jcgd:
+                et_jcgd.setText(progress+"");
+                break;
+            case R.id.seek_jcfxsd:
+                et_jcfxsd.setText(progress+"");
+                break;
+            case R.id.seek_hrbj:
+                et_hrbj.setText(progress+"");
+                break;
             default:
                 break;
         }
@@ -1045,4 +1074,18 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     }
 
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+
+    }
 }
