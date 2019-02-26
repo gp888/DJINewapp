@@ -517,7 +517,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
     public WaypointMissionOperator getWaypointMissionOperator() {
         if (instance == null) {
-            instance = DJISDKManager.getInstance().getMissionControl().getWaypointMissionOperator();
+//            instance = DJISDKManager.getInstance().getMissionControl().getWaypointMissionOperator();
         }
         return instance;
     }
@@ -1255,32 +1255,32 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         switch (seekBar.getId()){
-            case R.id.seek_qsgd:
+            case R.id.seek_hv_high:
 //                et_qsgd.setText(progress+"");
 
                 movsud.setQsgd_ptr(progress);
                 break;
-            case R.id.seek_gdjg:
+            case R.id.seek_hv_interval:
 //                et_gdjg.setText(progress+"");
                 movsud.setGdjg_ptr(progress);
                 break;
-            case R.id.seek_jcds:
+            case R.id.seek_hv_numbers:
 //                et_jcds.setText(progress+"");
                 movsud.setJcds_ptr(progress);
                 break;
-            case R.id.seek_ddcjsj:
+            case R.id.seek_hv_time:
 //                et_ddcjsj.setText(progress+"");
                 movsud.setDdcjsj_ptr(progress);
                 break;
-            case R.id.seek_jcgd:
+            case R.id.seek_mv_interval:
 //                et_jcgd.setText(progress+"");
                 movsud.setJcgd_ptr(progress);
                 break;
-            case R.id.seek_jcfxsd:
+            case R.id.seek_mv_speed:
 //                et_jcfxsd.setText(progress+"");
                 movsud.setJcfxsd_ptr(progress);
                 break;
-            case R.id.seek_hrbj:
+            case R.id.seek_hs_radius:
 //                et_hrbj.setText(progress+"");
                 movsud.setHrbj_ptr(progress);
                 break;
